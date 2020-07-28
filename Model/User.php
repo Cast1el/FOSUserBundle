@@ -107,7 +107,7 @@ abstract class User implements UserInterface, GroupableInterface
     public function __construct()
     {
         $this->enabled = false;
-        $this->roles = [];
+        $this->roles = array();
     }
 
     /**
@@ -140,7 +140,7 @@ abstract class User implements UserInterface, GroupableInterface
      */
     public function serialize()
     {
-        return serialize([
+        return serialize(array(
             $this->password,
             $this->salt,
             $this->usernameCanonical,
@@ -149,7 +149,7 @@ abstract class User implements UserInterface, GroupableInterface
             $this->id,
             $this->email,
             $this->emailCanonical,
-        ]);
+        ));
     }
 
     /**
@@ -494,7 +494,7 @@ abstract class User implements UserInterface, GroupableInterface
      */
     public function setRoles(array $roles)
     {
-        $this->roles = [];
+        $this->roles = array();
 
         foreach ($roles as $role) {
             $this->addRole($role);
@@ -516,7 +516,7 @@ abstract class User implements UserInterface, GroupableInterface
      */
     public function getGroupNames()
     {
-        $names = [];
+        $names = array();
         foreach ($this->getGroups() as $group) {
             $names[] = $group->getName();
         }

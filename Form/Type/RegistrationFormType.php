@@ -39,20 +39,20 @@ class RegistrationFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('email', EmailType::class, ['label' => 'form.email', 'translation_domain' => 'FOSUserBundle'])
-            ->add('username', null, ['label' => 'form.username', 'translation_domain' => 'FOSUserBundle'])
-            ->add('plainPassword', RepeatedType::class, [
+            ->add('email', EmailType::class, array('label' => 'form.email', 'translation_domain' => 'FOSUserBundle'))
+            ->add('username', null, array('label' => 'form.username', 'translation_domain' => 'FOSUserBundle'))
+            ->add('plainPassword', RepeatedType::class, array(
                 'type' => PasswordType::class,
-                'options' => [
+                'options' => array(
                     'translation_domain' => 'FOSUserBundle',
-                    'attr' => [
+                    'attr' => array(
                         'autocomplete' => 'new-password',
-                    ],
-                ],
-                'first_options' => ['label' => 'form.password'],
-                'second_options' => ['label' => 'form.password_confirmation'],
+                    ),
+                ),
+                'first_options' => array('label' => 'form.password'),
+                'second_options' => array('label' => 'form.password_confirmation'),
                 'invalid_message' => 'fos_user.password.mismatch',
-            ])
+            ))
         ;
     }
 
@@ -61,10 +61,10 @@ class RegistrationFormType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
+        $resolver->setDefaults(array(
             'data_class' => $this->class,
             'csrf_token_id' => 'registration',
-        ]);
+        ));
     }
 
     // BC for SF < 3.0

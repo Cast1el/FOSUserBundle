@@ -11,7 +11,7 @@
 
 namespace FOS\UserBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -24,10 +24,8 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
  *
  * @author Thibault Duplessis <thibault.duplessis@gmail.com>
  * @author Christophe Coevoet <stof@notk.org>
- *
- * @final
  */
-class SecurityController extends Controller
+class SecurityController extends AbstractController
 {
     private $tokenManager;
 
@@ -37,6 +35,8 @@ class SecurityController extends Controller
     }
 
     /**
+     * @param Request $request
+     *
      * @return Response
      */
     public function loginAction(Request $request)
@@ -68,11 +68,11 @@ class SecurityController extends Controller
             ? $this->tokenManager->getToken('authenticate')->getValue()
             : null;
 
-        return $this->renderLogin([
+        return $this->renderLogin(array(
             'last_username' => $lastUsername,
             'error' => $error,
             'csrf_token' => $csrfToken,
-        ]);
+        ));
     }
 
     public function checkAction()
@@ -88,6 +88,8 @@ class SecurityController extends Controller
     /**
      * Renders the login template with the given parameters. Overwrite this function in
      * an extended controller to provide additional data for the login template.
+     *
+     * @param array $data
      *
      * @return Response
      */

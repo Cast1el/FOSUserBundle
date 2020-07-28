@@ -30,6 +30,8 @@ class UsernameFormType extends AbstractType
 
     /**
      * Constructor.
+     *
+     * @param UserToUsernameTransformer $usernameTransformer
      */
     public function __construct(UserToUsernameTransformer $usernameTransformer)
     {

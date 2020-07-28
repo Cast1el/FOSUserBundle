@@ -18,8 +18,8 @@ use FOS\UserBundle\Form\Factory\FactoryInterface;
 use FOS\UserBundle\FOSUserEvents;
 use FOS\UserBundle\Model\UserInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,10 +29,8 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  * Controller managing the user profile.
  *
  * @author Christophe Coevoet <stof@notk.org>
- *
- * @final
  */
-class ProfileController extends Controller
+class ProfileController extends AbstractController
 {
     private $eventDispatcher;
     private $formFactory;
@@ -55,13 +53,15 @@ class ProfileController extends Controller
             throw new AccessDeniedException('This user does not have access to this section.');
         }
 
-        return $this->render('@FOSUser/Profile/show.html.twig', [
+        return $this->render('@FOSUser/Profile/show.html.twig', array(
             'user' => $user,
-        ]);
+        ));
     }
 
     /**
      * Edit the user.
+     *
+     * @param Request $request
      *
      * @return Response
      */
@@ -73,7 +73,7 @@ class ProfileController extends Controller
         }
 
         $event = new GetResponseUserEvent($user, $request);
-        $this->eventDispatcher->dispatch(FOSUserEvents::PROFILE_EDIT_INITIALIZE, $event);
+        $this->eventDispatcher->dispatch($event, FOSUserEvents::PROFILE_EDIT_INITIALIZE);
 
         if (null !== $event->getResponse()) {
             return $event->getResponse();
@@ -86,7 +86,7 @@ class ProfileController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $event = new FormEvent($form, $request);
-            $this->eventDispatcher->dispatch(FOSUserEvents::PROFILE_EDIT_SUCCESS, $event);
+            $this->eventDispatcher->dispatch($event, FOSUserEvents::PROFILE_EDIT_SUCCESS);
 
             $this->userManager->updateUser($user);
 
@@ -95,13 +95,13 @@ class ProfileController extends Controller
                 $response = new RedirectResponse($url);
             }
 
-            $this->eventDispatcher->dispatch(FOSUserEvents::PROFILE_EDIT_COMPLETED, new FilterUserResponseEvent($user, $request, $response));
+            $this->eventDispatcher->dispatch(new FilterUserResponseEvent($user, $request, $response), FOSUserEvents::PROFILE_EDIT_COMPLETED);
 
             return $response;
         }
 
-        return $this->render('@FOSUser/Profile/edit.html.twig', [
+        return $this->render('@FOSUser/Profile/edit.html.twig', array(
             'form' => $form->createView(),
-        ]);
+        ));
     }
 }

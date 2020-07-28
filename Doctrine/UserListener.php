@@ -42,14 +42,16 @@ class UserListener implements EventSubscriber
      */
     public function getSubscribedEvents()
     {
-        return [
+        return array(
             'prePersist',
             'preUpdate',
-        ];
+        );
     }
 
     /**
      * Pre persist listener based on doctrine common.
+     *
+     * @param LifecycleEventArgs $args
      */
     public function prePersist(LifecycleEventArgs $args)
     {
@@ -61,6 +63,8 @@ class UserListener implements EventSubscriber
 
     /**
      * Pre update listener based on doctrine common.
+     *
+     * @param LifecycleEventArgs $args
      */
     public function preUpdate(LifecycleEventArgs $args)
     {
@@ -73,6 +77,8 @@ class UserListener implements EventSubscriber
 
     /**
      * Updates the user properties.
+     *
+     * @param UserInterface $user
      */
     private function updateUserFields(UserInterface $user)
     {
@@ -82,6 +88,9 @@ class UserListener implements EventSubscriber
 
     /**
      * Recomputes change set for Doctrine implementations not doing it automatically after the event.
+     *
+     * @param ObjectManager $om
+     * @param UserInterface $user
      */
     private function recomputeChangeSet(ObjectManager $om, UserInterface $user)
     {

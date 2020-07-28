@@ -19,8 +19,8 @@ use FOS\UserBundle\Form\Factory\FactoryInterface;
 use FOS\UserBundle\FOSUserEvents;
 use FOS\UserBundle\Model\GroupInterface;
 use FOS\UserBundle\Model\GroupManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,10 +31,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  *
  * @author Thibault Duplessis <thibault.duplessis@gmail.com>
  * @author Christophe Coevoet <stof@notk.org>
- *
- * @final
  */
-class GroupController extends Controller
+class GroupController extends AbstractController
 {
     private $eventDispatcher;
     private $formFactory;
@@ -52,9 +50,9 @@ class GroupController extends Controller
      */
     public function listAction()
     {
-        return $this->render('@FOSUser/Group/list.html.twig', [
+        return $this->render('@FOSUser/Group/list.html.twig', array(
             'groups' => $this->groupManager->findGroups(),
-        ]);
+        ));
     }
 
     /**
@@ -66,15 +64,16 @@ class GroupController extends Controller
      */
     public function showAction($groupName)
     {
-        return $this->render('@FOSUser/Group/show.html.twig', [
+        return $this->render('@FOSUser/Group/show.html.twig', array(
             'group' => $this->findGroupBy('name', $groupName),
-        ]);
+        ));
     }
 
     /**
      * Edit one group, show the edit form.
      *
-     * @param string $groupName
+     * @param Request $request
+     * @param string  $groupName
      *
      * @return Response
      */
@@ -83,7 +82,7 @@ class GroupController extends Controller
         $group = $this->findGroupBy('name', $groupName);
 
         $event = new GetResponseGroupEvent($group, $request);
-        $this->eventDispatcher->dispatch(FOSUserEvents::GROUP_EDIT_INITIALIZE, $event);
+        $this->eventDispatcher->dispatch($event, FOSUserEvents::GROUP_EDIT_INITIALIZE);
 
         if (null !== $event->getResponse()) {
             return $event->getResponse();
@@ -96,28 +95,30 @@ class GroupController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $event = new FormEvent($form, $request);
-            $this->eventDispatcher->dispatch(FOSUserEvents::GROUP_EDIT_SUCCESS, $event);
+            $this->eventDispatcher->dispatch($event, FOSUserEvents::GROUP_EDIT_SUCCESS);
 
             $this->groupManager->updateGroup($group);
 
             if (null === $response = $event->getResponse()) {
-                $url = $this->generateUrl('fos_user_group_show', ['groupName' => $group->getName()]);
+                $url = $this->generateUrl('fos_user_group_show', array('groupName' => $group->getName()));
                 $response = new RedirectResponse($url);
             }
 
-            $this->eventDispatcher->dispatch(FOSUserEvents::GROUP_EDIT_COMPLETED, new FilterGroupResponseEvent($group, $request, $response));
+            $this->eventDispatcher->dispatch(new FilterGroupResponseEvent($group, $request, $response), FOSUserEvents::GROUP_EDIT_COMPLETED);
 
             return $response;
         }
 
-        return $this->render('@FOSUser/Group/edit.html.twig', [
+        return $this->render('@FOSUser/Group/edit.html.twig', array(
             'form' => $form->createView(),
             'group_name' => $group->getName(),
-        ]);
+        ));
     }
 
     /**
      * Show the new form.
+     *
+     * @param Request $request
      *
      * @return Response
      */
@@ -125,7 +126,7 @@ class GroupController extends Controller
     {
         $group = $this->groupManager->createGroup('');
 
-        $this->eventDispatcher->dispatch(FOSUserEvents::GROUP_CREATE_INITIALIZE, new GroupEvent($group, $request));
+        $this->eventDispatcher->dispatch(new GroupEvent($group, $request), FOSUserEvents::GROUP_CREATE_INITIALIZE);
 
         $form = $this->formFactory->createForm();
         $form->setData($group);
@@ -134,29 +135,30 @@ class GroupController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $event = new FormEvent($form, $request);
-            $this->eventDispatcher->dispatch(FOSUserEvents::GROUP_CREATE_SUCCESS, $event);
+            $this->eventDispatcher->dispatch($event, FOSUserEvents::GROUP_CREATE_SUCCESS);
 
             $this->groupManager->updateGroup($group);
 
             if (null === $response = $event->getResponse()) {
-                $url = $this->generateUrl('fos_user_group_show', ['groupName' => $group->getName()]);
+                $url = $this->generateUrl('fos_user_group_show', array('groupName' => $group->getName()));
                 $response = new RedirectResponse($url);
             }
 
-            $this->eventDispatcher->dispatch(FOSUserEvents::GROUP_CREATE_COMPLETED, new FilterGroupResponseEvent($group, $request, $response));
+            $this->eventDispatcher->dispatch(new FilterGroupResponseEvent($group, $request, $response), FOSUserEvents::GROUP_CREATE_COMPLETED);
 
             return $response;
         }
 
-        return $this->render('@FOSUser/Group/new.html.twig', [
+        return $this->render('@FOSUser/Group/new.html.twig', array(
             'form' => $form->createView(),
-        ]);
+        ));
     }
 
     /**
      * Delete one group.
      *
-     * @param string $groupName
+     * @param Request $request
+     * @param string  $groupName
      *
      * @return RedirectResponse
      */
@@ -167,7 +169,7 @@ class GroupController extends Controller
 
         $response = new RedirectResponse($this->generateUrl('fos_user_group_list'));
 
-        $this->eventDispatcher->dispatch(FOSUserEvents::GROUP_DELETE_COMPLETED, new FilterGroupResponseEvent($group, $request, $response));
+        $this->eventDispatcher->dispatch(new FilterGroupResponseEvent($group, $request, $response), FOSUserEvents::GROUP_DELETE_COMPLETED);
 
         return $response;
     }

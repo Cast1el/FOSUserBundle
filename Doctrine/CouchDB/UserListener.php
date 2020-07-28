@@ -34,12 +34,15 @@ class UserListener implements EventSubscriber
      */
     public function getSubscribedEvents()
     {
-        return [
+        return array(
             Event::prePersist,
             Event::preUpdate,
-        ];
+        );
     }
 
+    /**
+     * @param LifecycleEventArgs $args
+     */
     public function prePersist(LifecycleEventArgs $args)
     {
         $object = $args->getDocument();
@@ -48,6 +51,9 @@ class UserListener implements EventSubscriber
         }
     }
 
+    /**
+     * @param LifecycleEventArgs $args
+     */
     public function preUpdate(LifecycleEventArgs $args)
     {
         $object = $args->getDocument();
@@ -58,6 +64,8 @@ class UserListener implements EventSubscriber
 
     /**
      * Updates the user properties.
+     *
+     * @param UserInterface $user
      */
     private function updateUserFields(UserInterface $user)
     {

@@ -15,7 +15,7 @@ use FOS\UserBundle\Event\FilterUserResponseEvent;
 use FOS\UserBundle\Event\UserEvent;
 use FOS\UserBundle\FOSUserEvents;
 use FOS\UserBundle\Security\LoginManagerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Security\Core\Exception\AccountStatusException;
 
@@ -34,7 +34,8 @@ class AuthenticationListener implements EventSubscriberInterface
     /**
      * AuthenticationListener constructor.
      *
-     * @param string $firewallName
+     * @param LoginManagerInterface $loginManager
+     * @param string                $firewallName
      */
     public function __construct(LoginManagerInterface $loginManager, $firewallName)
     {
@@ -47,22 +48,24 @@ class AuthenticationListener implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return [
+        return array(
             FOSUserEvents::REGISTRATION_COMPLETED => 'authenticate',
             FOSUserEvents::REGISTRATION_CONFIRMED => 'authenticate',
             FOSUserEvents::RESETTING_RESET_COMPLETED => 'authenticate',
-        ];
+        );
     }
 
     /**
-     * @param string $eventName
+     * @param FilterUserResponseEvent  $event
+     * @param string                   $eventName
+     * @param EventDispatcherInterface $eventDispatcher
      */
     public function authenticate(FilterUserResponseEvent $event, $eventName, EventDispatcherInterface $eventDispatcher)
     {
         try {
             $this->loginManager->logInUser($this->firewallName, $event->getUser(), $event->getResponse());
 
-            $eventDispatcher->dispatch(FOSUserEvents::SECURITY_IMPLICIT_LOGIN, new UserEvent($event->getUser(), $event->getRequest()));
+            $eventDispatcher->dispatch(new UserEvent($event->getUser(), $event->getRequest()), FOSUserEvents::SECURITY_IMPLICIT_LOGIN);
         } catch (AccountStatusException $ex) {
             // We simply do not authenticate users which do not pass the user
             // checker (not enabled, expired, etc.).

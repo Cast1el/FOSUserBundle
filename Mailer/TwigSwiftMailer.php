@@ -41,6 +41,11 @@ class TwigSwiftMailer implements MailerInterface
 
     /**
      * TwigSwiftMailer constructor.
+     *
+     * @param \Swift_Mailer         $mailer
+     * @param UrlGeneratorInterface $router
+     * @param \Twig_Environment     $twig
+     * @param array                 $parameters
      */
     public function __construct(\Swift_Mailer $mailer, UrlGeneratorInterface $router, \Twig_Environment $twig, array $parameters)
     {
@@ -56,12 +61,12 @@ class TwigSwiftMailer implements MailerInterface
     public function sendConfirmationEmailMessage(UserInterface $user)
     {
         $template = $this->parameters['template']['confirmation'];
-        $url = $this->router->generate('fos_user_registration_confirm', ['token' => $user->getConfirmationToken()], UrlGeneratorInterface::ABSOLUTE_URL);
+        $url = $this->router->generate('fos_user_registration_confirm', array('token' => $user->getConfirmationToken()), UrlGeneratorInterface::ABSOLUTE_URL);
 
-        $context = [
+        $context = array(
             'user' => $user,
             'confirmationUrl' => $url,
-        ];
+        );
 
         $this->sendMessage($template, $context, $this->parameters['from_email']['confirmation'], (string) $user->getEmail());
     }
@@ -72,12 +77,12 @@ class TwigSwiftMailer implements MailerInterface
     public function sendResettingEmailMessage(UserInterface $user)
     {
         $template = $this->parameters['template']['resetting'];
-        $url = $this->router->generate('fos_user_resetting_reset', ['token' => $user->getConfirmationToken()], UrlGeneratorInterface::ABSOLUTE_URL);
+        $url = $this->router->generate('fos_user_resetting_reset', array('token' => $user->getConfirmationToken()), UrlGeneratorInterface::ABSOLUTE_URL);
 
-        $context = [
+        $context = array(
             'user' => $user,
             'confirmationUrl' => $url,
-        ];
+        );
 
         $this->sendMessage($template, $context, $this->parameters['from_email']['resetting'], (string) $user->getEmail());
     }

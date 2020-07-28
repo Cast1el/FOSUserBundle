@@ -29,6 +29,11 @@ class EmailConfirmationListener implements EventSubscriberInterface
 
     /**
      * EmailConfirmationListener constructor.
+     *
+     * @param MailerInterface         $mailer
+     * @param TokenGeneratorInterface $tokenGenerator
+     * @param UrlGeneratorInterface   $router
+     * @param SessionInterface        $session
      */
     public function __construct(MailerInterface $mailer, TokenGeneratorInterface $tokenGenerator, UrlGeneratorInterface $router, SessionInterface $session)
     {
@@ -43,11 +48,14 @@ class EmailConfirmationListener implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return [
+        return array(
             FOSUserEvents::REGISTRATION_SUCCESS => 'onRegistrationSuccess',
-        ];
+        );
     }
 
+    /**
+     * @param FormEvent $event
+     */
     public function onRegistrationSuccess(FormEvent $event)
     {
         /** @var $user \FOS\UserBundle\Model\UserInterface */

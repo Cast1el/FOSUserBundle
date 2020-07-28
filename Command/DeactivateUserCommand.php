@@ -42,9 +42,9 @@ class DeactivateUserCommand extends Command
         $this
             ->setName('fos:user:deactivate')
             ->setDescription('Deactivate a user')
-            ->setDefinition([
+            ->setDefinition(array(
                 new InputArgument('username', InputArgument::REQUIRED, 'The username'),
-            ])
+            ))
             ->setHelp(<<<'EOT'
 The <info>fos:user:deactivate</info> command deactivates a user (will not be able to log in)
 

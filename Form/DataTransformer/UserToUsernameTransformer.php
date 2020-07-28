@@ -30,6 +30,8 @@ class UserToUsernameTransformer implements DataTransformerInterface
 
     /**
      * UserToUsernameTransformer constructor.
+     *
+     * @param UserManagerInterface $userManager
      */
     public function __construct(UserManagerInterface $userManager)
     {

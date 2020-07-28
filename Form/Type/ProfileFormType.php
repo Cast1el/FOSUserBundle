@@ -41,26 +41,26 @@ class ProfileFormType extends AbstractType
     {
         $this->buildUserForm($builder, $options);
 
-        $constraintsOptions = [
+        $constraintsOptions = array(
             'message' => 'fos_user.current_password.invalid',
-        ];
+        );
 
         if (!empty($options['validation_groups'])) {
-            $constraintsOptions['groups'] = [reset($options['validation_groups'])];
+            $constraintsOptions['groups'] = array(reset($options['validation_groups']));
         }
 
-        $builder->add('current_password', PasswordType::class, [
+        $builder->add('current_password', PasswordType::class, array(
             'label' => 'form.current_password',
             'translation_domain' => 'FOSUserBundle',
             'mapped' => false,
-            'constraints' => [
+            'constraints' => array(
                 new NotBlank(),
                 new UserPassword($constraintsOptions),
-            ],
-            'attr' => [
+            ),
+            'attr' => array(
                 'autocomplete' => 'current-password',
-            ],
-        ]);
+            ),
+        ));
     }
 
     /**
@@ -68,10 +68,10 @@ class ProfileFormType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
+        $resolver->setDefaults(array(
             'data_class' => $this->class,
             'csrf_token_id' => 'profile',
-        ]);
+        ));
     }
 
     // BC for SF < 3.0
@@ -94,12 +94,15 @@ class ProfileFormType extends AbstractType
 
     /**
      * Builds the embedded form representing the user.
+     *
+     * @param FormBuilderInterface $builder
+     * @param array                $options
      */
     protected function buildUserForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('username', null, ['label' => 'form.username', 'translation_domain' => 'FOSUserBundle'])
-            ->add('email', EmailType::class, ['label' => 'form.email', 'translation_domain' => 'FOSUserBundle'])
+            ->add('username', null, array('label' => 'form.username', 'translation_domain' => 'FOSUserBundle'))
+            ->add('email', EmailType::class, array('label' => 'form.email', 'translation_domain' => 'FOSUserBundle'))
         ;
     }
 }

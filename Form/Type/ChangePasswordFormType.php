@@ -39,39 +39,39 @@ class ChangePasswordFormType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $constraintsOptions = [
+        $constraintsOptions = array(
             'message' => 'fos_user.current_password.invalid',
-        ];
+        );
 
         if (!empty($options['validation_groups'])) {
-            $constraintsOptions['groups'] = [reset($options['validation_groups'])];
+            $constraintsOptions['groups'] = array(reset($options['validation_groups']));
         }
 
-        $builder->add('current_password', PasswordType::class, [
+        $builder->add('current_password', PasswordType::class, array(
             'label' => 'form.current_password',
             'translation_domain' => 'FOSUserBundle',
             'mapped' => false,
-            'constraints' => [
+            'constraints' => array(
                 new NotBlank(),
                 new UserPassword($constraintsOptions),
-            ],
-            'attr' => [
+            ),
+            'attr' => array(
                 'autocomplete' => 'current-password',
-            ],
-        ]);
+            ),
+        ));
 
-        $builder->add('plainPassword', RepeatedType::class, [
+        $builder->add('plainPassword', RepeatedType::class, array(
             'type' => PasswordType::class,
-            'options' => [
+            'options' => array(
                 'translation_domain' => 'FOSUserBundle',
-                'attr' => [
+                'attr' => array(
                     'autocomplete' => 'new-password',
-                ],
-            ],
-            'first_options' => ['label' => 'form.new_password'],
-            'second_options' => ['label' => 'form.new_password_confirmation'],
+                ),
+            ),
+            'first_options' => array('label' => 'form.new_password'),
+            'second_options' => array('label' => 'form.new_password_confirmation'),
             'invalid_message' => 'fos_user.password.mismatch',
-        ]);
+        ));
     }
 
     /**
@@ -79,10 +79,10 @@ class ChangePasswordFormType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
+        $resolver->setDefaults(array(
             'data_class' => $this->class,
             'csrf_token_id' => 'change_password',
-        ]);
+        ));
     }
 
     // BC for SF < 3.0

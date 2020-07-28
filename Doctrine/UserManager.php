@@ -33,7 +33,10 @@ class UserManager extends BaseUserManager
     /**
      * Constructor.
      *
-     * @param string $class
+     * @param PasswordUpdaterInterface $passwordUpdater
+     * @param CanonicalFieldsUpdater   $canonicalFieldsUpdater
+     * @param ObjectManager            $om
+     * @param string                   $class
      */
     public function __construct(PasswordUpdaterInterface $passwordUpdater, CanonicalFieldsUpdater $canonicalFieldsUpdater, ObjectManager $om, $class)
     {

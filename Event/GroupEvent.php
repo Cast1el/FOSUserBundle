@@ -12,7 +12,7 @@
 namespace FOS\UserBundle\Event;
 
 use FOS\UserBundle\Model\GroupInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Request;
 
 class GroupEvent extends Event
@@ -29,6 +29,9 @@ class GroupEvent extends Event
 
     /**
      * GroupEvent constructor.
+     *
+     * @param GroupInterface $group
+     * @param Request        $request
      */
     public function __construct(GroupInterface $group, Request $request)
     {
